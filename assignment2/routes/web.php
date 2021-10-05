@@ -68,3 +68,5 @@ Route::get('documentation', function () {
 });
 
 require __DIR__.'/auth.php';
+
+// 1234
