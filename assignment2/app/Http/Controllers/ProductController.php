@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\User;
 use App\Models\Review;
+use App\Models\Image;
 use App\Models\Manufacturer;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Session;
@@ -90,9 +91,9 @@ class ProductController extends Controller
 
         $request->session()->put('product_id', $product->id); // save the current product_id to the session for use later
 
-        $images = DB::table('images')->where('product_id', $id)->get(); // getting all the images where the image->product_id = current product's $id
+        $images = Image::where('product_id', $id)->get();
 
-        $error = [];
+        $error = []; // line 34 in show.blade.php checks for the count of this variable (this variable normally is empty but might contain error message: "U've already reviewed this item" from the review@create func)
 
         return view('products.show')->with('product', $product)->with('reviews', $reviews)->with('images', $images)->with('error', $error);
     }
@@ -164,7 +165,7 @@ class ProductController extends Controller
 
             // loop through all the reviews, with each loop delete the review where the review's product_id = $id
             foreach ($reviews as $review) {
-                DB::table('reviews')->where('product_id', $id)->delete();
+                Review::where('product_id', $id)->delete();
             }
 
             $product->delete();

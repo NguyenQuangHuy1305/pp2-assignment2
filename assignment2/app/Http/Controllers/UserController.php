@@ -108,7 +108,8 @@ class UserController extends Controller
     {
         $product_id = $request->session()->get('product_id'); //get the product_id from the "session"
 
-        $follow = DB::table('follows')->where('follower_user_id', Auth::user()->id)->where('followed_user_id', $id)->delete();
+        $follow = Follow::where('follower_user_id', Auth::user()->id)->where('followed_user_id', $id)->delete();
 
-        return redirect()->back();    }
+        return redirect()->back();    
+    }
 }

@@ -3,8 +3,8 @@
 }
 
 /*
- * Custom translucent site header
- */
+* Custom translucent site header
+*/
 
 .site-header {
   background-color: rgba(0, 0, 0, .85);
@@ -21,8 +21,8 @@
 }
 
 /*
- * Dummy devices (replace them with your own or something else entirely!)
- */
+* Dummy devices (replace them with your own or something else entirely!)
+*/
 
 .product-device {
   position: absolute;
@@ -56,8 +56,8 @@
 
 
 /*
- * Extra utilities
- */
+* Extra utilities
+*/
 
 .flex-equal > * {
   flex: 1;
@@ -67,12 +67,6 @@
     flex: 1;
   }
 }
-
-/* .table, th, td {
-  border:1px solid black;
-  text-align:center;
-  width: 50%
-} */
 
 input[type="text"] {
   padding: 8px;
@@ -161,3 +155,11 @@ h1 {
 a {
   text-align: center;
 }
+
+table, th, td {
+    border: 1.5px solid black;
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 5px;
+  }

@@ -10,7 +10,13 @@
 @endsection
 
 @section('content')
-  
+
+  <?php
+    use App\Models\Follow;
+    use App\Models\Like; 
+    use App\Models\Dislike; 
+  ?>
+
   <table style:>
   <tr bgcolor="#9966ff">
     <th>Reviewer's name</th>
@@ -40,7 +46,7 @@
           <?php
 
           if (Auth::user()->id != $user_id) {
-            $follow = DB::table('follows')->where('follower_user_id', Auth::user()->id)->where('followed_user_id', $user_id)->get();
+            $follow = Follow::where('follower_user_id', Auth::user()->id)->where('followed_user_id', $user_id)->get();
             if ($follow->isEmpty()) { ?>
               <a href = '{{ url("follow/$user_id") }}'> Follow</a>
             <?php } elseif (count($follow) > 0) { ?>
@@ -59,7 +65,7 @@
 
           <td>
             <?php
-              $like = DB::table('likes')->where('user_id', Auth::user()->id)->where('review_id', $review->pivot->id)->get();
+              $like = Like::where('user_id', Auth::user()->id)->where('review_id', $review->pivot->id)->get();
               if ($like->isEmpty()) { ?>
                 <a href = '{{ url("liked/$review_id") }}'><img src="{{asset('images/'.'like.png')}}" width="20"></a>
               <?php } elseif (count($like) > 0) { ?>
@@ -70,7 +76,7 @@
 
           <td>
             <?php
-              $dislike = DB::table('dislikes')->where('user_id', Auth::user()->id)->where('review_id', $review->pivot->id)->get();
+              $dislike = Dislike::where('user_id', Auth::user()->id)->where('review_id', $review->pivot->id)->get();
               if ($dislike->isEmpty()) { ?>
                 <a href = '{{ url("disliked/$review_id") }}'><img src="{{asset('images/'.'dislike.png')}}" width="20"></a>
               <?php } elseif (count($dislike) > 0) { ?>

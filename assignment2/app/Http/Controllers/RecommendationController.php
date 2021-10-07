@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Product;
+use App\Models\Follow;
 use App\Models\User;
 use App\Models\Review;
 use App\Models\Manufacturer;
@@ -119,7 +120,8 @@ class RecommendationController extends Controller
 
         // reason2 - get the products that the people the current user followed liked (rating >=4)
         $recommended_products_reason2 = collect();
-        $follows = DB::table('follows')->where('follower_user_id', Auth::user()->id)->get();
+        
+        $follows = Follow::where('follower_user_id', Auth::user()->id)->get();
         foreach ($follows as $follow) {
             $user = User::find($follow->followed_user_id);
             $reviews = $user->reviews; // get all the reviews made by the followed user

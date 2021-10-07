@@ -30,7 +30,13 @@
 @endsection
 
 @section('content')
-  
+
+  <?php
+    use App\Models\Follow;
+    use App\Models\Like; 
+    use App\Models\Dislike; 
+  ?>
+
   @if (count($error)>0)
     <p style="color:red;">{{$error[0]}}</p>
   @endif
@@ -59,25 +65,22 @@
       @foreach ($reviews as $review)
 
         <?php
-        // dd($review);
-        $review_id = $review->id;
-        $user_id = $review->user_id;
-        if ($review->like_count > $review->dislike_count) { ?>
-        <tr bgcolor="#66ff66">
-        <?php } elseif ($review->like_count < $review->dislike_count) { ?>
-        <tr bgcolor="#ff9966">
+          if ($review->like_count > $review->dislike_count) { ?>
+          <tr bgcolor="#66ff66">
+          <?php } elseif ($review->like_count < $review->dislike_count) { ?>
+          <tr bgcolor="#ff9966">
         <?php } ?>
         
           <td>
             {{$review->user_name}}
             @auth
             <?php
-              if (Auth::user()->id != $user_id) {
-                $follow = DB::table('follows')->where('follower_user_id', Auth::user()->id)->where('followed_user_id', $user_id)->get();
+              if (Auth::user()->id != $review->user_id) {
+                $follow = Follow::where('follower_user_id', Auth::user()->id)->where('followed_user_id', $review->user_id)->get();
                 if ($follow->isEmpty()) { ?>
-                  <a href = '{{ url("follow/$user_id") }}'> Follow</a>
+                  <a href = '{{ url("follow/$review->user_id") }}'> Follow</a>
                 <?php } elseif (count($follow) > 0) { ?>
-                  <a href = '{{ url("unfollow/$user_id") }}'> Unfollow</a>
+                  <a href = '{{ url("unfollow/$review->user_id") }}'> Unfollow</a>
                 <?php }
               }?>
             @endauth
@@ -91,32 +94,32 @@
 
             <td>
               <?php
-                $like = DB::table('likes')->where('user_id', Auth::user()->id)->where('review_id', $review->id)->get();
+                $like = Like::where('user_id', Auth::user()->id)->where('review_id', $review->id)->get();
                 if ($like->isEmpty()) { ?>
-                  <a href = '{{ url("liked/$review_id") }}'><img src="{{asset('images/'.'like.png')}}" width="20"></a>
+                  <a href = '{{ url("liked/$review->id") }}'><img src="{{asset('images/'.'like.png')}}" width="20"></a>
                 <?php } elseif (count($like) > 0) { ?>
-                  <a href = '{{ url("liked/$review_id") }}'><img src="{{asset('images/'.'liked.png')}}" width="20"></a>
+                  <a href = '{{ url("liked/$review->id") }}'><img src="{{asset('images/'.'liked.png')}}" width="20"></a>
                 <?php } ?>
                   {{$review->like_count}}
             </td>
 
             <td>
               <?php
-                $dislike = DB::table('dislikes')->where('user_id', Auth::user()->id)->where('review_id', $review->id)->get();
+                $dislike = Dislike::where('user_id', Auth::user()->id)->where('review_id', $review->id)->get();
                 if ($dislike->isEmpty()) { ?>
-                  <a href = '{{ url("disliked/$review_id") }}'><img src="{{asset('images/'.'dislike.png')}}" width="20"></a>
+                  <a href = '{{ url("disliked/$review->id") }}'><img src="{{asset('images/'.'dislike.png')}}" width="20"></a>
                 <?php } elseif (count($dislike) > 0) { ?>
-                  <a href = '{{ url("disliked/$review_id") }}'><img src="{{asset('images/'.'disliked.png')}}" width="20"></a>
+                  <a href = '{{ url("disliked/$review->id") }}'><img src="{{asset('images/'.'disliked.png')}}" width="20"></a>
                 <?php } ?>
                   {{$review->dislike_count}}
             </td>
 
             <?php if (Auth::user()->id == $review->user_id || Auth::user()->role == 'moderator') { ?>
 
-            <td><a href = '{{ url("review/$review_id/edit") }}'>Update</a></td> 
+            <td><a href = '{{ url("review/$review->id/edit") }}'>Update</a></td> 
             
             <td>          
-              <form id="deletereview" method="POST" action = '{{url("review/$review_id")}}'>
+              <form id="deletereview" method="POST" action = '{{url("review/$review->id")}}'>
                 {{csrf_field()}}
                 {{method_field('DELETE')}}
                 <input type="submit" value="Delete">

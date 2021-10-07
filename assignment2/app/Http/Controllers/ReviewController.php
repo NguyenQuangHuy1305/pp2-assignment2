@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Review;
+use App\Models\Image;
 use App\Models\User;
 use App\Models\Product;
 use App\Models\Manufacturer;
@@ -44,7 +45,7 @@ class ReviewController extends Controller
                 $product_id = $request->session()->get('product_id'); //get the product_id from the "session"
                 $product = Product::find($product_id); // get the product
                 $reviews = Review::where('product_id', '=', $product_id)->paginate(5);
-                $images = DB::table('images')->where('product_id', $product_id)->get(); // getting all the images where the image->product_id = current product's $id
+                $images = Image::where('product_id', $product_id)->get();
 
                 $error = ["You've already reviewed this product"];
 
@@ -95,19 +96,19 @@ class ReviewController extends Controller
     {
         $user_id = Auth::user()->id; // get the current user_id
         $product_id = $request->session()->get('product_id'); //get the product_id from the "session"
-        $likes = DB::table('likes')->get();
-        $dislikes = DB::table('dislikes')->get();
+        
+        $likes = Like::all();
+        $dislikes = Dislike::all();
 
         // loop through all the likes in the like table, if the current user's id = the like's id AND the "clicked on" review's id = the like's review_id, then delete the like (aka un-like), then redirect to the previous product page
         // basically this part is the "un-like" feature
         foreach ($likes as $like) {
             if ($user_id == $like->user_id && $id == $like->review_id) {
-                DB::table('likes')->where('user_id', $user_id)->where('review_id' , $id)->delete();
+                Like::where('user_id', $user_id)->where('review_id', $id)->delete();
 
-                // this part is for updating the like_count and dislike_count of a review after the count changed
+                // this part is for updating the like_count of a review after the user un-liked
                 $review = Review::find($id);
-                $review->like_count = DB::table('likes')->where('review_id', $review->id)->count();
-                $review->dislike_count = DB::table('dislikes')->where('review_id', $review->id)->count();
+                $review->like_count = Like::where('review_id', $review->id)->count();
                 $review->save();
 
                 return redirect()->back();
@@ -122,16 +123,16 @@ class ReviewController extends Controller
         // basically this part is the "un-dislike, then turn it into a like" feature
         foreach ($dislikes as $dislike) {
             if ($user_id == $dislike->user_id && $id == $dislike->review_id) {
-                DB::table('dislikes')->where('user_id', $user_id)->where('review_id', $id)->delete();
+                Dislike::where('user_id', $user_id)->where('review_id', $id)->delete();
                 $like = new Like();
                 $like->user_id = $user_id;
                 $like->review_id = $id;
                 $like->save();
 
-                // this part is for updating the like_count and dislike_count of a review after the count changed
+                // this part is for updating the like_count and dislike_count of a review after the user changed from dislike to like
                 $review = Review::find($id);
-                $review->like_count = DB::table('likes')->where('review_id', $review->id)->count();
-                $review->dislike_count = DB::table('dislikes')->where('review_id', $review->id)->count();
+                $review->like_count = Like::where('review_id', $review->id)->count();
+                $review->dislike_count = Dislike::where('review_id', $review->id)->count();
                 $review->save();
 
                 return redirect()->back();
@@ -146,8 +147,8 @@ class ReviewController extends Controller
 
         // this part is for updating the like_count and dislike_count of a review after the count changed
         $review = Review::find($id);
-        $review->like_count = DB::table('likes')->where('review_id', $review->id)->count();
-        $review->dislike_count = DB::table('dislikes')->where('review_id', $review->id)->count();
+        $review->like_count = Like::where('review_id', $review->id)->count();
+        $review->dislike_count = Dislike::where('review_id', $review->id)->count();
         $review->save();
 
         return redirect()->back();
@@ -157,19 +158,18 @@ class ReviewController extends Controller
     {
         $user_id = Auth::user()->id; // get the current user_id
         $product_id = $request->session()->get('product_id'); //get the product_id from the "session"
-        $dislikes = DB::table('dislikes')->get();
-        $likes = DB::table('likes')->get();
+        $dislikes = Dislike::all();
+        $likes = Like::all();
         
         // loop through all the dislikes in the dislikes table, if the current user's id = the dislikes's id AND the "clicked on" review's id = the dislikes's review_id, then delete the dislikes (aka un-dislikes), then redirect to the previous product page
         // basically this part is the "un-dislikes" feature
         foreach ($dislikes as $dislike) {
             if ($user_id == $dislike->user_id && $id == $dislike->review_id) {
-                DB::table('dislikes')->where('user_id', $user_id)->where('review_id', $id)->delete();
+                Dislike::where('user_id', $user_id)->where('review_id', $id)->delete();
 
                 // this part is for updating the like_count and dislike_count of a review after the count changed
                 $review = Review::find($id);
-                $review->like_count = DB::table('likes')->where('review_id', $review->id)->count();
-                $review->dislike_count = DB::table('dislikes')->where('review_id', $review->id)->count();
+                $review->dislike_count = Dislike::where('review_id', $review->id)->count();
                 $review->save();
 
                 return redirect()->back();
@@ -184,7 +184,7 @@ class ReviewController extends Controller
         // basically this part is the "un-like, then turn it into a dislike" feature
         foreach ($likes as $like) {
             if ($user_id == $like->user_id && $id == $like->review_id) {
-                DB::table('likes')->where('user_id', $user_id)->where('review_id', $id)->delete();
+                Like::where('user_id', $user_id)->where('review_id', $id)->delete();
                 $dislike = new Dislike();
                 $dislike->user_id = $user_id;
                 $dislike->review_id = $id;
@@ -192,8 +192,8 @@ class ReviewController extends Controller
 
                 // this part is for updating the like_count and dislike_count of a review after the count changed
                 $review = Review::find($id);
-                $review->like_count = DB::table('likes')->where('review_id', $review->id)->count();
-                $review->dislike_count = DB::table('dislikes')->where('review_id', $review->id)->count();
+                $review->like_count = Like::where('review_id', $review->id)->count();
+                $review->dislike_count = Dislike::where('review_id', $review->id)->count();
                 $review->save();
 
                 return redirect()->back();
@@ -207,8 +207,8 @@ class ReviewController extends Controller
 
         // this part is for updating the like_count and dislike_count of a review after the count changed
         $review = Review::find($id);
-        $review->like_count = DB::table('likes')->where('review_id', $review->id)->count();
-        $review->dislike_count = DB::table('dislikes')->where('review_id', $review->id)->count();
+        $review->like_count = Like::where('review_id', $review->id)->count();
+        $review->dislike_count = Dislike::where('review_id', $review->id)->count();
         $review->save();
         
         return redirect()->back();
