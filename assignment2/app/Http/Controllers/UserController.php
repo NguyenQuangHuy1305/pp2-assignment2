@@ -54,6 +54,7 @@ class UserController extends Controller
     {
         $user = User::find($id);
         $reviews = $user->reviews;
+        dd($reviews);
         return view('products.profile')->with('user', $user)->with('reviews', $reviews);
     }
 
