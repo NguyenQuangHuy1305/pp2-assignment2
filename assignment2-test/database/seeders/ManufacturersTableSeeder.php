@@ -15,17 +15,17 @@ class ManufacturersTableSeeder extends Seeder
     public function run()
     {
         DB::table('manufacturers')->insert([
-            'name' => 'Apple',
+            'name' => 'BSH',
             'URL' => '',
             'updated_at' => DB::raw('CURRENT_TIMESTAMP'),
         ]);
         DB::table('manufacturers')->insert([
-            'name' => 'Microsoft',
+            'name' => 'AON',
             'URL' => '',
             'updated_at' => DB::raw('CURRENT_TIMESTAMP'),
         ]);
         DB::table('manufacturers')->insert([
-            'name' => 'Samsung',
+            'name' => 'Prudential',
             'URL' => '',
             'updated_at' => DB::raw('CURRENT_TIMESTAMP'),
         ]);

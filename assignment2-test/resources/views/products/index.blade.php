@@ -5,7 +5,7 @@
 @endsection
 
 @section('headline')
-  <h1 class="display-4 fw-normal">Product review application</h1>
+  <h1 class="display-4 fw-normal">BSH online insurnace system</h1>
 @endsection
 
 @section('content')

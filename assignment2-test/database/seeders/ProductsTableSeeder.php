@@ -15,7 +15,7 @@ class ProductsTableSeeder extends Seeder
     public function run()
     {
         DB::table('products')->insert([
-            'name' => 'Apple Iphone 6',
+            'name' => 'Car insurance',
             'price' => 600,
             'description' => 'description 1',
             'manufacturer_id' => 1,
@@ -23,7 +23,7 @@ class ProductsTableSeeder extends Seeder
             'updated_at' => DB::raw('CURRENT_TIMESTAMP'),
         ]);
         DB::table('products')->insert([
-            'name' => 'Samsung Note 4',
+            'name' => 'House insurance',
             'price' => 567,
             'description' => 'description 2',
             'manufacturer_id' => 2,
@@ -31,7 +31,7 @@ class ProductsTableSeeder extends Seeder
             'updated_at' => DB::raw('CURRENT_TIMESTAMP'),
         ]);
         DB::table('products')->insert([
-            'name' => 'Nokia 8810',
+            'name' => 'Health insurance',
             'price' => 432,
             'description' => 'description 3',
             'manufacturer_id' => 1,
@@ -39,7 +39,7 @@ class ProductsTableSeeder extends Seeder
             'updated_at' => DB::raw('CURRENT_TIMESTAMP'),
         ]);
         DB::table('products')->insert([
-            'name' => 'Blackberry Classic',
+            'name' => 'Travel insurance',
             'price' => 100,
             'description' => 'description 4',
             'manufacturer_id' => 3,

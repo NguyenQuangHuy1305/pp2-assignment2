@@ -29,7 +29,7 @@
     </p>
 
     <p>
-      <label>Price</label>
+      <label>Preimum rate</label>
       <input type="text" name="price" value="{{old('price')}}"></input>
     </p>
 
